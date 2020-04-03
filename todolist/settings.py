@@ -23,9 +23,63 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '*1vv%&qmsz92c9o97r(ynpki%5u97_i(1endw1+ry)4al07+65'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
+
+# static_file URL
+STATIC_ROOT = '/usr/share/nginx/html/static'
+MEDIA_ROOT = 'usr/share/nginx/html/media'
+
+# Amazon SES setting
+AWS_SES_ACCESS_KEY_ID = os.environ.get('AWS_SES_ACCESS_ID')
+AWS_SES_SECRET_ACCESS_KEY = os.environ.get('AWS_SES_SECRET_ACCESS_KEY')
+EMAIL_BACKEND = 'django_ses.SESBackend'
+
+# logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers':False,
+
+    #logger setting
+    'loggers':{
+        #django logger setting
+        'django':{
+            'handlers':['file'],
+            'level':'INFO',
+        },
+        #todo app logger settingh
+        'todo':{
+            'handlers':['file'],
+            'level':'INFO',
+        },
+    },
+
+    # handlers setting
+    'handlers':{
+        'file':{
+            'level':'INFO',
+            'class':'logging.handlers.TimedRotatingFileHandler',
+            'Filename':os.path.join(BASE_DIR, 'logs/django.log'),
+            'formatter':'prod',
+            'when':'D',
+            'interval':1,
+            'backupCount':7,
+        },
+    },
+
+    # formater setting
+    'formatters':{
+        'prod':{
+            'format':'\t'.join([
+                '%(asctime)s',
+                '[%(levelname)s]',
+                '%(pathname)s(Line:%(lineno)d)',
+                '%(message)s'
+            ])
+        },
+    }
+}
 
 
 # Application definition
@@ -37,7 +91,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'todo'
+    'todo',
+    'django_ses',
 ]
 
 MIDDLEWARE = [
