@@ -8,3 +8,5 @@ urlpatterns = [
     path('delete/<int:pk>', TodoDelete.as_view(), name='delete'),
     path('update/<int:pk>', TodoUpdate.as_view(), name='update'),
 ]
+
+#http://3.114.57.168/list/
